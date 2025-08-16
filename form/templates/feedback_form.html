@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 25px 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 500px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #444;
+        }
+        .form-control, .form-check-input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .emoji-options span, .star, .number-box {
+            font-size: 28px;
+            cursor: pointer;
+            margin: 5px;
+            transition: 0.2s;
+        }
+        .emoji-options span:hover, .star:hover, .number-box:hover {
+            transform: scale(1.2);
+        }
+        .selected-emoji {
+            border-bottom: 3px solid #4CAF50;
+        }
+        .selected-star {
+            color: gold;
+        }
+        .selected-number {
+            background: #4CAF50;
+            color: white;
+            border-radius: 6px;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Submit Your Feedback</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label>First Name:</label>
+        {{ form.first_name }}
+
+        <label>Last Name:</label>
+        {{ form.last_name }}
+
+        <label>Email:</label>
+        {{ form.email }}
+
+        <label>Phone Number:</label>
+        {{ form.phone_number }}
+
+        <!-- Emoji Satisfaction -->
+        <label>Overall Satisfaction:</label>
+        <div class="emoji-options" id="satisfaction">
+            <span data-value="extremely_sad">😡</span>
+            <span data-value="sad">☹️</span>
+            <span data-value="neutral">😐</span>
+            <span data-value="happy">😊</span>
+            <span data-value="extremely_happy">🤩</span>
+        </div>
+        <input type="hidden" name="overall_satisfaction" id="overall_satisfaction">
+
+        <!-- Product Quality Stars -->
+        <label>Product Quality:</label>
+        <div id="stars">
+            <span class="star" data-value="1">⭐</span>
+            <span class="star" data-value="2">⭐</span>
+            <span class="star" data-value="3">⭐</span>
+            <span class="star" data-value="4">⭐</span>
+            <span class="star" data-value="5">⭐</span>
+        </div>
+        <input type="hidden" name="product_quality" id="product_quality">
+
+        <!-- Delivery Rating 1-10 -->
+        <label>Delivery Service Rating:</label>
+        <div id="delivery">
+            {% for i in delivery_range %}
+            <span class="number-box" data-value="{{ i }}">{{ i }}</span>
+            {% endfor %}
+        </div>
+        <input type="hidden" name="delivery_service_rating" id="delivery_service_rating">
+
+        <label>Recommendation:</label>
+        {{ form.recommendation }}
+
+        <label>Additional Feedback:</label>
+        {{ form.additional_feedback }}
+
+        <label>
+            {{ form.terms_agreed }} I agree to the terms
+        </label>
+
+        <label>Upload Image:</label>
+        {{ form.image }}
+
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<script>
+    // Emoji Satisfaction
+    document.querySelectorAll("#satisfaction span").forEach(span => {
+        span.addEventListener("click", function() {
+            document.querySelectorAll("#satisfaction span").forEach(s => s.classList.remove("selected-emoji"));
+            this.classList.add("selected-emoji");
+            document.getElementById("overall_satisfaction").value = this.dataset.value;
+        });
+    });
+
+    // Product Quality Stars
+    document.querySelectorAll("#stars .star").forEach(star => {
+        star.addEventListener("click", function() {
+            document.querySelectorAll("#stars .star").forEach(s => s.classList.remove("selected-star"));
+            this.classList.add("selected-star");
+            document.getElementById("product_quality").value = this.dataset.value;
+        });
+    });
+
+    // Delivery Service Rating
+    document.querySelectorAll("#delivery .number-box").forEach(box => {
+        box.addEventListener("click", function() {
+            document.querySelectorAll("#delivery .number-box").forEach(b => b.classList.remove("selected-number"));
+            this.classList.add("selected-number");
+            document.getElementById("delivery_service_rating").value = this.dataset.value;
+        });
+    });
+</script>
+</body>
+</html>
+
